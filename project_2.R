@@ -209,7 +209,6 @@ customers$high <- ifelse(cumsum(customers$monetary) <= high.cutoff, "Top 20%", "
 customers$high <- factor(customers$high, levels=c("Top 20%", "Bottom 80%"), ordered=TRUE)
 levels(customers$high)
 round(prop.table(table(customers$high)), 2)
-remove(high.cutoff)
 
 customers <- customers[order(customers$CustomerID),]
 
@@ -261,18 +260,6 @@ scatter.2 <- scatter.2 + ylab("Log-transformed Monetary Value of Customer")
 scatter.2
 
 
-
-#####################
-# Handling outliers #
-#####################
-
-# How many customers are represented by the two data points in the lower left-hand corner of the plot? 19
-delete <- subset(customers, monetary.log < 0)
-no.value.custs <- unique(delete$CustomerID)
-delete2 <- subset(ecom_data_subset, CustomerID %in% no.value.custs)
-delete2 <- delete2[order(delete2$CustomerID, delete2$InvoiceDate),]
-remove(delete, delete2, no.value.custs)
-
 # Scaled variables
 scatter.3 <- ggplot(customers, aes(x = frequency.z, y = monetary.z))
 scatter.3 <- scatter.3 + geom_point(aes(colour = recency.z, shape = pareto))
@@ -281,10 +268,6 @@ scatter.3 <- scatter.3 + scale_colour_gradient(name="Z-scored Recency")
 scatter.3 <- scatter.3 + xlab("Z-scored Frequency")
 scatter.3 <- scatter.3 + ylab("Z-scored Monetary Value of Customer")
 scatter.3
-
-remove(scatter.1, scatter.2, scatter.3)
-
-
 
 ##################################################
 # Determining number of clusters through K-Means #
@@ -389,7 +372,7 @@ barplot(table(nc$Best.n[1,]),
 
 # remove(preprocessed)
 
-############## Hierarchical Cluster ##################
+############## Hierarchical Cluster ####################################################################################
 custmr_data <- read.csv("Ecommerce.csv",header = T) # reading data
 custmr_data <- na.omit(custmr_data) # data cleaning
 
